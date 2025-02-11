@@ -1,6 +1,6 @@
 let isGameStarted = true;
-let CARD_PER_ROW = 5;
-let CARD_PER_COLUMN = 6;
+let CARD_PER_ROW = 2;
+let CARD_PER_COLUMN = 3;
 let isFlipping = false;
 let flippedCards = [];
 

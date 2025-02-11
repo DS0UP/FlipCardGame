@@ -20,7 +20,6 @@ body {
 }
 
 .top-container {
-    background-color: blueviolet;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -38,15 +37,13 @@ body {
 }
 
 .score-board {
-    font-size: 3vh;
+    font-size: 5vh;
 }
 
 .game-wrapper {
-    background-color: antiquewhite;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 20px;
     position: relative;
     flex-wrap: wrap;
 }
