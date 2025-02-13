@@ -7,7 +7,8 @@
 
 body {
     font-family: 'KCC-Hanbit';
-    background: url(./asdf.jpg);
+    background: url(asdf.jpg);
+    background-size: cover;
     color: white;
     text-align: center;
     margin: 0;
