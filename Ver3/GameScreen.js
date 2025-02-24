@@ -8,6 +8,7 @@ let flippedCards = [];
 let timerId;
 
 let score = 0;
+let sec = 0;
 
 let roundTime = [20, 30, 40, 50, 60];
 let roundColumn = [3, 6, 6, 6, 6];
@@ -63,6 +64,7 @@ function gameSet(round) {
     flipContainer.style.gridTemplateRows = `repeat(${CARD_PER_ROW}, 1fr)`;
     flipContainer.style.gridTemplateColumns = `repeat(${CARD_PER_COLUMN}, 1fr)`;
     flipContainer.style.gap = '1rem';
+    createItemSlots(4);
 }
 
 /**
@@ -196,7 +198,8 @@ function flipCard(selectedCard) {
 /**
  * 타이머 시작 함수
  */
-function startTimer(sec) {
+function startTimer(ssec) {
+    sec = ssec;
     timerDisplay.textContent = sec + "초";
     var num = 360;
     timerContainer.style.setProperty("--timerA", num + "deg")
@@ -252,11 +255,87 @@ function nextRound() {
     currentRound++;
     
     if (currentRound < roundColumn.length) {
+        addRandomItem()
         gameSet(currentRound);
         startTimer(roundTime[currentRound]);
     } else {
         alert("🎉 게임 클리어! 축하합니다!");
         isGameStarted = false;
+    }
+}
+
+const itemContainer = document.getElementById('items');
+
+// 아이템 종류를 미리 설정
+const itemTypes = ['시간 추가', '아이템 B'];
+
+// 아이템 슬롯을 원하는 수만큼 생성하는 함수
+function createItemSlots(slotCount) {
+    // 기존 아이템 슬롯 초기화
+    itemContainer.innerHTML = '';
+    
+    for (let i = 0; i < slotCount; i++) {
+        const slot = document.createElement('div');
+        slot.classList.add('item');
+        slot.dataset.slotId = i;
+        
+        // 슬롯 클릭 시 해당 아이템의 innerText를 확인
+        slot.addEventListener('click', function() {
+        const itemText = slot.innerText;
+        console.log('클릭된 아이템:', itemText);
+        switch (itemText) {
+            case '시간 추가':
+                sec += 10;
+                break;
+            case '아이템 B':
+
+                break;
+            default:
+                break;
+        }
+        slot.innerText = ''; // 클릭된 슬롯의 텍스트 제거
+        shiftItemsUp();
+        });
+        
+        itemContainer.appendChild(slot);
+    }
+}
+
+function shiftItemsUp() {
+    const slots = document.querySelectorAll('.item');
+    
+    // 슬롯 배열을 순차적으로 돌면서 빈 슬롯을 만나면
+    // 그 뒤의 슬롯들의 아이템을 위로 이동
+    let firstEmptySlotIndex = -1;
+    for (let i = 0; i < slots.length; i++) {
+        const slot = slots[i];
+        if (slot.innerText === '') {
+            if (firstEmptySlotIndex === -1) {
+                firstEmptySlotIndex = i;
+            }
+        } else if (firstEmptySlotIndex !== -1) {
+            // 빈 슬롯을 찾은 후, 그 이후 아이템을 위로 올리기
+            slots[firstEmptySlotIndex].innerText = slot.innerText;
+            slot.innerText = ''; // 원래 위치는 빈칸으로
+            firstEmptySlotIndex++; // 빈 슬롯을 찾은 위치를 이동
+        }
+    }
+}
+
+// 랜덤 아이템을 빈 슬롯에 추가하는 함수
+function addRandomItem() {
+    const slots = document.querySelectorAll('.item');
+    
+    // 빈 슬롯 찾기 (innerText가 비어 있는 슬롯 찾기)
+    const emptySlots = Array.from(slots).filter(slot => slot.innerText === '');
+    
+    if (emptySlots.length > 0) {
+        // 랜덤 아이템을 itemTypes 배열에서 선택
+        const randomItem = itemTypes[Math.floor(Math.random() * itemTypes.length)];
+        const randomSlot = emptySlots[0]; // 빈 슬롯 중 첫 번째 슬롯을 선택
+        randomSlot.innerText = randomItem;
+    } else {
+        console.log('빈 슬롯이 없습니다');
     }
 }
 
