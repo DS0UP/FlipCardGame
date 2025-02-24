@@ -3,7 +3,8 @@ let currentRound = 0;
 let isRoundCleared = false;
 let CARD_PER_COLUMN = 6;
 let CARD_PER_ROW = 5;
-let isFlipping = false;
+let isFlipping1 = false;
+let isFlipping2 = false;
 let flippedCards = [];
 let timerId;
 
@@ -136,7 +137,7 @@ function rotateCard(selectedCard) {
         const endPoint = {X: e.pageX, Y: e.pageY};
         const rotation = calculateRotation(startPoint, endPoint);
 
-        if (isFlipping || selectedCard.classList.contains('flipped')) {
+        if (isFlipping2 || selectedCard.classList.contains('flipped')) {
             return;
         }
 
@@ -165,23 +166,25 @@ function checkRoundClear() {
  * @returns 
  */
 function flipCard(selectedCard) {
-    if (!isGameStarted || isFlipping || selectedCard.classList.contains('flipped')) {
+    if (!isGameStarted || isFlipping2 || selectedCard.classList.contains('flipped')) {
         return;
     }
     
     selectedCard.classList.add('flipped');
+    isFlipping1 = true;
     flippedCards.push(selectedCard);
     selectedCard.style.transform = `rotateX(${selectedCard.currentRotate.X}deg) rotateY(${selectedCard.currentRotate.Y}deg)`;
 
     if (flippedCards.length === 2) {
-        isFlipping = true;
+        isFlipping2 = true;
 
         let [firstCard, secondCard] = flippedCards;
         if (firstCard.dataset.value === secondCard.dataset.value) {
             score += 55;
             document.getElementById("score").textContent = score;
             flippedCards = [];
-            isFlipping = false;
+            isFlipping1 = false;
+            isFlipping2 = false;
             checkRoundClear();
         } else {
             setTimeout(() => { //  초 후 제거
@@ -190,7 +193,8 @@ function flipCard(selectedCard) {
                 firstCard.currentRotate = {X: 0, Y: 0};
                 secondCard.currentRotate = {X: 0, Y: 0};
                 flippedCards = [];
-                isFlipping = false;
+                isFlipping1 = false;
+                isFlipping2 = false;
                 firstCard.style.transform = `rotateX(${selectedCard.currentRotate.X}deg) rotateY(${selectedCard.currentRotate.Y}deg)`;
                 secondCard.style.transform = `rotateX(${selectedCard.currentRotate.X}deg) rotateY(${selectedCard.currentRotate.Y}deg)`;
             }, 1000);
@@ -267,16 +271,22 @@ function createItemSlots(slotCount) {
             switch (item) {
                 case '시간 추가':
                     sec += 10;
+                    slot.dataset.item = ''; // 클릭된 슬롯의 데이터 초기화
+                    slot.innerText = '';
+                    shiftItemsUp();
                     break;
                 case '아이템 B':
-                    
+                    if (isFlipping1) {
+                        break;
+                    }
+                    autoMatch();
+                    slot.dataset.item = ''; // 클릭된 슬롯의 데이터 초기화
+                    slot.innerText = '';
+                    shiftItemsUp();
                     break;
                 default:
                     break;
             }
-            slot.dataset.item = ''; // 클릭된 슬롯의 데이터 초기화
-            slot.innerText = '';
-            shiftItemsUp();
         });
         
         itemContainer.appendChild(slot);
@@ -338,5 +348,64 @@ function nextRound() {
         isGameStarted = false;
     }
 }
+
+function autoMatch() {
+    const unmatchedCards = Array.from(document.querySelectorAll('.card:not(.flipped)'));
+
+    if (unmatchedCards.length < 2) {
+        console.log("뒤집을 카드가 부족합니다.");
+        return;
+    }
+
+    let cardPairs = {};
+
+    unmatchedCards.forEach(card => {
+        const value = card.dataset.value;
+        if (!cardPairs[value]) {
+            cardPairs[value] = [];
+        }
+        cardPairs[value].push(card);
+    });
+
+    let matchedPair = null;
+
+    for (let key in cardPairs) {
+        if (cardPairs[key].length === 2) {
+            matchedPair = cardPairs[key];
+            break;
+        }
+    }
+
+    if (matchedPair) {
+        const [firstCard, secondCard] = matchedPair;
+        isFlipping2 = true; // 중복 실행 방지
+
+        setTimeout(() => {
+            // 회전 애니메이션 적용
+            firstCard.style.transition = 'transform 0.5s';
+            secondCard.style.transition = 'transform 0.5s';
+
+            firstCard.currentRotate.Y += 180;
+            secondCard.currentRotate.Y += 180;
+
+            firstCard.style.transform = `rotateX(${firstCard.currentRotate.X}deg) rotateY(${firstCard.currentRotate.Y}deg)`;
+            secondCard.style.transform = `rotateX(${secondCard.currentRotate.X}deg) rotateY(${secondCard.currentRotate.Y}deg)`;
+
+            setTimeout(() => {
+                firstCard.classList.add('flipped');
+                secondCard.classList.add('flipped');
+                flippedCards = [];
+                score += 55;
+                document.getElementById("score").textContent = score;
+                isFlipping2 = false;
+                checkRoundClear();
+            }, 500); // 애니메이션 끝날 때 플립 적용
+        }, 500);
+    } else {
+        console.log("매칭 가능한 카드가 없습니다.");
+    }
+}
+
+
 
 gameStart();
