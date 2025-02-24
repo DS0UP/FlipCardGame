@@ -195,7 +195,9 @@ function flipCard(selectedCard) {
 }
 
 /**
- * 모든 카드가 뒤집혀졌는지 확인하고 라운드 클리어 여부를 처리하는 함수
+ * 모든 카드가 뒤집혀졌는지 확인하고
+ * 
+ * 라운드 클리어 여부를 처리하는 함수
  */
 function checkRoundClear() {
     let allFlipped = document.querySelectorAll('.card.flipped').length === CARD_PER_ROW * CARD_PER_COLUMN;
@@ -237,7 +239,9 @@ function startTimer(ssec) {
 }
 
 /**
- * 주어진 수만큼 아이템 슬롯을 생성하고, 슬롯 클릭 시 해당 아이템에 따라 동작을 수행하는 함수
+ * 주어진 수만큼 아이템 슬롯을 생성하고,
+ * 
+ * 슬롯 클릭 시 해당 아이템에 따라 동작을 수행하는 함수
  * @param {number} slotCount 아이템 슬롯 개수
  */
 function showRound() {
@@ -262,7 +266,8 @@ function showRound() {
 }
 
 /**
- * 주어진 수만큼 아이템 슬롯을 생성하고,
+ * 주어진 수만큼 아이템 슬롯을 생성하고
+ * 
  * 슬롯 클릭 시 해당 아이템에 따라 동작을 수행하는 함수
  */
 function createItemSlots(slotCount) {
@@ -329,7 +334,8 @@ function shiftItemsUp() {
 }
 
 /**
- * 랜덤 아이템을 빈 슬롯에 추가하는 함수, 
+ * 랜덤 아이템을 빈 슬롯에 추가하는 함수
+ * 
  * 슬롯을 검색하여 빈 슬롯에 랜덤으로 아이템을 할당
  */
 function addRandomItem() {
@@ -347,7 +353,8 @@ function addRandomItem() {
 }
 
 /**
- * 다음 라운드로 이동하는 함수, 
+ * 다음 라운드로 이동하는 함수
+ * 
  * 현재 점수를 증가시키고, 새로운 라운드를 설정
  */
 function nextRound() {
@@ -366,8 +373,11 @@ function nextRound() {
 }
 
 /**
- * 카드 자동 맞추기 아이템 함수, 
- * 아직 뒤집지 않은 카드들 중에서 짝을 맞출 수 있는 카드 두 장을 찾아 자동으로 뒤집기
+ * 카드 자동 맞추기 아이템 함수
+ * 
+ * 아직 뒤집지 않은 카드들 중에서
+ * 
+ * 짝을 맞출 수 있는 카드 두 장을 찾아 자동으로 뒤집기
  * @returns {void}
  */
 function autoMatch() {
