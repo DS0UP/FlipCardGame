@@ -107,9 +107,9 @@ function createCard(value) {
 }
 
 /**
- * 드래그 계산
- * @param {*} start 
- * @param {*} end 
+ * 드래그 계산 함수
+ * @param {*} start 시작 좌표
+ * @param {*} end 종료 좌표
  * @returns 
  */
 const calculateRotation = (start, end) => {
@@ -232,6 +232,10 @@ function startTimer(ssec) {
     }, 1000);
 }
 
+/**
+ * 다음 라운드 보여주는 애니메이션
+ * @returns 
+ */
 function showRound() {
     const roundBox = document.getElementById("roundBox");
     const text = document.getElementById("roundText");
@@ -253,7 +257,10 @@ function showRound() {
     }, 4000);
 }
 
-// 아이템 슬롯을 원하는 수만큼 생성하는 함수
+/**
+ * 주어진 수만큼 아이템 슬롯을 생성하고, 슬롯 클릭 시 해당 아이템에 따라 동작을 수행하는 함수
+ * @param {*} slotCount 아이템 슬롯 개수
+ */
 function createItemSlots(slotCount) {
     // 기존 아이템 슬롯 초기화
     itemContainer.innerHTML = '';
@@ -293,6 +300,9 @@ function createItemSlots(slotCount) {
     }
 }
 
+/**
+ * 아이템이 있는 슬롯을 위로 이동시켜 빈 슬롯을 채우는 함수
+ */
 function shiftItemsUp() {
     const slots = document.querySelectorAll('.item');
     
@@ -349,63 +359,51 @@ function nextRound() {
     }
 }
 
+/**
+ * 카드 자동맞추기 아이템 함수
+ * @returns 
+ */
 function autoMatch() {
-    const unmatchedCards = Array.from(document.querySelectorAll('.card:not(.flipped)'));
+    const unmatchedCards = Array.from(document.querySelectorAll('.card:not(.flipped)')); // 아직 뒤집지 않은 카드들
 
-    if (unmatchedCards.length < 2) {
+    if (unmatchedCards.length < 2) { // 뒤집을 카드가 2개 미만일 경우
         console.log("뒤집을 카드가 부족합니다.");
         return;
     }
 
-    let cardPairs = {};
+    let cardPairs = {}; // 카드 값을 기준으로 짝을 찾기 위한 객체
 
+    // 카드 값별로 그룹화
     unmatchedCards.forEach(card => {
-        const value = card.dataset.value;
+        const value = card.dataset.value; // 카드의 데이터 값
         if (!cardPairs[value]) {
             cardPairs[value] = [];
         }
-        cardPairs[value].push(card);
+        cardPairs[value].push(card); // 값에 맞는 카드들 그룹에 추가
     });
 
-    let matchedPair = null;
+    let matchedPair = null; // 매칭된 카드 쌍을 저장할 변수
 
+    // 두 장의 카드가 일치하는 짝을 찾기
     for (let key in cardPairs) {
-        if (cardPairs[key].length === 2) {
+        if (cardPairs[key].length === 2) { // 짝을 이룬 카드 2개를 찾음
             matchedPair = cardPairs[key];
             break;
         }
     }
 
-    if (matchedPair) {
-        const [firstCard, secondCard] = matchedPair;
-        isFlipping2 = true; // 중복 실행 방지
+    if (matchedPair) { // 짝을 찾았다면
+        const [firstCard, secondCard] = matchedPair; // 첫 번째, 두 번째 카드
 
-        setTimeout(() => {
-            // 회전 애니메이션 적용
-            firstCard.style.transition = 'transform 0.5s';
-            secondCard.style.transition = 'transform 0.5s';
+        // 마우스 이벤트 시뮬레이션
+        const mouseUpEvent = new MouseEvent('mouseup', {});
 
-            firstCard.currentRotate.Y += 180;
-            secondCard.currentRotate.Y += 180;
-
-            firstCard.style.transform = `rotateX(${firstCard.currentRotate.X}deg) rotateY(${firstCard.currentRotate.Y}deg)`;
-            secondCard.style.transform = `rotateX(${secondCard.currentRotate.X}deg) rotateY(${secondCard.currentRotate.Y}deg)`;
-
-            setTimeout(() => {
-                firstCard.classList.add('flipped');
-                secondCard.classList.add('flipped');
-                flippedCards = [];
-                score += 55;
-                document.getElementById("score").textContent = score;
-                isFlipping2 = false;
-                checkRoundClear();
-            }, 500); // 애니메이션 끝날 때 플립 적용
-        }, 500);
+        // 첫 번째 카드와 두 번째 카드에 대해 mouseup 이벤트를 트리거
+        firstCard.dispatchEvent(mouseUpEvent);
+        secondCard.dispatchEvent(mouseUpEvent);
     } else {
         console.log("매칭 가능한 카드가 없습니다.");
     }
 }
-
-
 
 gameStart();
