@@ -1,34 +1,38 @@
-let isGameStarted = false;
-let currentRound = 0;
-let isRoundCleared = false;
-let CARD_PER_COLUMN = 6;
-let CARD_PER_ROW = 5;
-let isFlipping1 = false;
-let isFlipping2 = false;
-let flippedCards = [];
-let timerId;
+// 1. 게임 설정 관련 변수
+let isGameStarted = false; // 게임 시작 여부
+let currentRound = 0; // 현재 라운드
+let isRoundCleared = false; // 라운드 클리어 여부
+let score = 0; // 현재 점수
+let sec = 0; // 타이머에 남은 시간
 
-let score = 0;
-let sec = 0;
+let roundTime = [20, 30, 40, 50, 60]; // 각 라운드의 시간
+let roundColumn = [3, 6, 6, 6, 6]; // 각 라운드의 열 개수
+let roundRow = [2, 2, 3, 4, 5]; // 각 라운드의 행 개수
 
-let roundTime = [20, 30, 40, 50, 60];
-let roundColumn = [3, 6, 6, 6, 6];
-let roundRow = [2, 2, 3, 4, 5];
+// 2. 게임 카드 관련 변수
+let CARD_PER_COLUMN = 6; // 카드 한 열의 개수
+let CARD_PER_ROW = 5; // 카드 한 행의 개수
+let flippedCards = []; // 뒤집힌 카드들을 저장하는 배열
+let isFlipping1 = false; // 카드 한 장이 회전 중
+let isFlipping2 = false; // 카드 두 장이 회전 중
+const flipContainer = document.querySelector('.flip'); // 카드 컨테이너
+const cardValues = []; // 카드 값 배열
+const newCard = []; // 새 카드 배열
 
-const flipContainer = document.querySelector('.flip');
-const cardValues = [];
-const newCard = [];
+// 3. 타이머 관련 변수
+let timerId; // 타이머 ID
+const timerContainer = document.querySelector(".timer"); // 타이머 표시 컨테이너
+const timerDisplay = document.getElementById('timerDisplay'); // 타이머 디스플레이
 
-let startPoint = {X: 0, Y: 0};
+// 4. 아이템 관련 변수
+const itemContainer = document.getElementById('items'); // 아이템 슬롯 컨테이너
+const itemTypes = ['시간 추가', '아이템 B']; // 아이템 종류
 
-const timerContainer = document.querySelector(".timer")
-const timerDisplay = document.getElementById('timerDisplay');
-
-const itemContainer = document.getElementById('items');
-const itemTypes = ['시간 추가', '아이템 B'];
+// 5. 기타 변수
+let startPoint = { X: 0, Y: 0 }; // 시작 점
 
 /**
- * 게임 시작 함수
+ * 게임을 시작하는 함수
  */
 function gameStart() {
     document.getElementById("score").textContent = score;
@@ -40,8 +44,8 @@ function gameStart() {
 }
 
 /**
- * 게임 세팅하는 함수
- * @param {*} round 
+ * 주어진 라운드에 맞춰 게임을 세팅하는 함수
+ * @param {*} round - 현재 라운드 번호
  */
 function gameSet(round) {
     CARD_PER_COLUMN = roundColumn[round];
@@ -72,8 +76,9 @@ function gameSet(round) {
 }
 
 /**
- * 카드를 생성하는 함수
- * @returns Tag Card
+ * 카드 요소를 생성하는 함수
+ * @param {*} value - 카드의 값
+ * @returns 생성된 카드 DOM 요소
  */
 function createCard(value) {
     const card = document.createElement('div');
@@ -107,10 +112,10 @@ function createCard(value) {
 }
 
 /**
- * 드래그 계산 함수
- * @param {*} start 시작 좌표
- * @param {*} end 종료 좌표
- * @returns 
+ * 드래그로 계산된 회전값을 반환하는 함수
+ * @param {Object} start - 시작 좌표 (X, Y)
+ * @param {Object} end - 종료 좌표 (X, Y)
+ * @returns {Object} 회전값 객체 (X, Y)
  */
 const calculateRotation = (start, end) => {
     const tmpX = end.X - start.X;
@@ -125,8 +130,8 @@ const calculateRotation = (start, end) => {
 }
 
 /**
- * 드래그 마우스 이벤트 생성 함수
- * @param {*} selectedCard 
+ * 카드 회전 및 드래그 마우스 이벤트를 처리하는 함수
+ * @param {*} selectedCard - 회전을 적용할 선택된 카드
  */
 function rotateCard(selectedCard) {
     selectedCard.addEventListener('mousedown', (e) => {
@@ -149,21 +154,8 @@ function rotateCard(selectedCard) {
 }
 
 /**
- * 모든 카드가 뒤집혀져 있는지 확인하는 함수
- */
-function checkRoundClear() {
-    let allFlipped = document.querySelectorAll('.card.flipped').length === CARD_PER_ROW * CARD_PER_COLUMN;
-    if (allFlipped) {
-        if (timerId) clearInterval(timerId); // 기존 타이머 정리
-        setTimeout(nextRound, 3000);
-        showRound();
-    }
-}
-
-/**
- * 회전 후 같은지 판별 하는 함수
- * @param {card} selectedCard 
- * @returns 
+ * 카드가 뒤집힌 후 같은 카드인지 확인하고 처리하는 함수
+ * @param {card} selectedCard - 선택된 카드 객체
  */
 function flipCard(selectedCard) {
     if (!isGameStarted || isFlipping2 || selectedCard.classList.contains('flipped')) {
@@ -203,7 +195,19 @@ function flipCard(selectedCard) {
 }
 
 /**
- * 타이머 시작 함수
+ * 모든 카드가 뒤집혀졌는지 확인하고 라운드 클리어 여부를 처리하는 함수
+ */
+function checkRoundClear() {
+    let allFlipped = document.querySelectorAll('.card.flipped').length === CARD_PER_ROW * CARD_PER_COLUMN;
+    if (allFlipped) {
+        if (timerId) clearInterval(timerId); // 기존 타이머 정리
+        setTimeout(nextRound, 3000);
+        showRound();
+    }
+}
+
+/**
+ * 타이머를 시작하고, 시간이 지나면 게임 종료 처리를 하는 함수
  */
 function startTimer(ssec) {
     sec = ssec;
@@ -233,8 +237,8 @@ function startTimer(ssec) {
 }
 
 /**
- * 다음 라운드 보여주는 애니메이션
- * @returns 
+ * 주어진 수만큼 아이템 슬롯을 생성하고, 슬롯 클릭 시 해당 아이템에 따라 동작을 수행하는 함수
+ * @param {number} slotCount 아이템 슬롯 개수
  */
 function showRound() {
     const roundBox = document.getElementById("roundBox");
@@ -258,8 +262,8 @@ function showRound() {
 }
 
 /**
- * 주어진 수만큼 아이템 슬롯을 생성하고, 슬롯 클릭 시 해당 아이템에 따라 동작을 수행하는 함수
- * @param {*} slotCount 아이템 슬롯 개수
+ * 주어진 수만큼 아이템 슬롯을 생성하고,
+ * 슬롯 클릭 시 해당 아이템에 따라 동작을 수행하는 함수
  */
 function createItemSlots(slotCount) {
     // 기존 아이템 슬롯 초기화
@@ -325,7 +329,8 @@ function shiftItemsUp() {
 }
 
 /**
- * 랜덤 아이템을 빈 슬롯에 추가하는 함수
+ * 랜덤 아이템을 빈 슬롯에 추가하는 함수, 
+ * 슬롯을 검색하여 빈 슬롯에 랜덤으로 아이템을 할당
  */
 function addRandomItem() {
     const slots = document.querySelectorAll('.item');
@@ -342,7 +347,8 @@ function addRandomItem() {
 }
 
 /**
- * 다음 라운드로 이동하는 함수
+ * 다음 라운드로 이동하는 함수, 
+ * 현재 점수를 증가시키고, 새로운 라운드를 설정
  */
 function nextRound() {
     score += 550;
@@ -360,8 +366,9 @@ function nextRound() {
 }
 
 /**
- * 카드 자동맞추기 아이템 함수
- * @returns 
+ * 카드 자동 맞추기 아이템 함수, 
+ * 아직 뒤집지 않은 카드들 중에서 짝을 맞출 수 있는 카드 두 장을 찾아 자동으로 뒤집기
+ * @returns {void}
  */
 function autoMatch() {
     const unmatchedCards = Array.from(document.querySelectorAll('.card:not(.flipped)')); // 아직 뒤집지 않은 카드들
@@ -404,6 +411,28 @@ function autoMatch() {
     } else {
         console.log("매칭 가능한 카드가 없습니다.");
     }
+}
+
+/**
+ * 뒤집히지 않은 카드들만 회전시키고 다시 원래대로 돌아오는 함수
+ * 
+ * 뒤집히지 않은 카드들을 180도 회전시키고 3초 후 원래 상태로 되돌림
+ * @returns {void}
+ */
+function rotateUnflippedCards() {
+    isFlipping2 = true;
+    const allCards = document.querySelectorAll('.card:not(.flipped)'); // 뒤집히지 않은 카드들만 선택
+    allCards.forEach(card => {
+        card.style.transition = 'transform 0.5s';  // 회전 애니메이션 설정
+        card.style.transform = 'rotateY(180deg)'; // 카드를 180도 회전시킴
+    });
+
+    setTimeout(() => {
+        allCards.forEach(card => {
+            card.style.transform = 'rotateY(0deg)';  // 카드를 원래 상태로 되돌림
+        });
+        isFlipping2 = false;
+    }, 3000); // 3초 후 원래대로 회전
 }
 
 gameStart();
