@@ -8,6 +8,7 @@ let sec = 0; // 타이머에 남은 시간
 let roundTime = [20, 30, 40, 50, 60]; // 각 라운드의 시간
 let roundColumn = [3, 6, 6, 6, 6]; // 각 라운드의 열 개수
 let roundRow = [2, 2, 3, 4, 5]; // 각 라운드의 행 개수
+let maxRound = roundTime.length - 1;
 
 // 2. 게임 카드 관련 변수
 let CARD_PER_COLUMN = 6; // 카드 한 열의 개수
@@ -90,17 +91,25 @@ function createCard(value) {
     const front = document.createElement('div');
     front.classList.add('front');
 
-    const frontHeading = document.createElement('h1');
-    frontHeading.textContent = value; // 나오는거거
-    front.appendChild(frontHeading); // 앞면에 제목 추가
-
     // 뒷면 생성
     const back = document.createElement('div');
     back.classList.add('back');
 
+    /* 
+    const frontHeading = document.createElement('h1');
+    frontHeading.textContent = value; // 나오는거거
+    front.appendChild(frontHeading); // 앞면에 제목 추가
+    */
+
+    /*
     const backHeading = document.createElement('h1');
     backHeading.textContent = '뒷면'; //나오는거거
     back.appendChild(backHeading); // 뒷면에 제목 추가
+    */
+
+    const cardImage = document.createElement('img');
+    cardImage.src = `cardImages/${value}.png`; // 이미지 경로를 설정
+    back.appendChild(cardImage); // 이미지 추가
 
     // 앞면과 뒷면을 카드에 추가
     card.appendChild(front);
@@ -249,6 +258,23 @@ function showRound() {
     const text = document.getElementById("roundText");
 
     if (!roundBox || !text) return;
+    if (currentRound == maxRound) {
+        roundBox.style.transition = `transform 500ms linear`;
+        roundBox.style.transform = "translate(0, 0)";
+
+        text.innerText = `클리어`;
+        text.style.transition = `transform 3000ms linear`;
+        text.style.transform = "translate(100vw, 0)";
+
+        setTimeout(() => {
+            roundBox.style.transform = "translate(0%, -100%)";
+        }, 3000);
+        setTimeout(() => {
+            text.style.transition = `transform 1ms linear`;
+            text.style.transform = "translate(-100vw, 0)";
+        }, 3500);
+        return;
+    }
 
     roundBox.style.transition = `transform 500ms linear`;
     roundBox.style.transform = "translate(0, 0)";
@@ -261,8 +287,9 @@ function showRound() {
         roundBox.style.transform = "translate(0%, -100%)";
     }, 3000);
     setTimeout(() => {
+        text.style.transition = `transform 1ms linear`;
         text.style.transform = "translate(-100vw, 0)";
-    }, 4000);
+    }, 3500);
 }
 
 /**
@@ -359,7 +386,9 @@ function shiftItemsUp() {
         } else if (firstEmptySlotIndex !== -1) {
             // 빈 슬롯을 찾은 후, 그 이후 아이템을 위로 이동
             slots[firstEmptySlotIndex].dataset.item = slot.dataset.item;
-            slots[firstEmptySlotIndex].innerText = slot.dataset.item;
+            const itemImage = document.createElement('img');
+            itemImage.src = `cardImages/${slot.dataset.item}.png`;
+            slots[firstEmptySlotIndex].appendChild(itemImage)
             slot.dataset.item = '';
             slot.innerText = '';
             firstEmptySlotIndex++;
@@ -396,18 +425,22 @@ function addItem(itemValue) {
     const specialSlots = document.querySelectorAll('.specialItem');
     const emptySlots = Array.from(slots).filter(slot => !slot.dataset.item);
     const emptySpecialSlots = Array.from(specialSlots).filter(specialSlots => !specialSlots.dataset.item);
+    const itemImage = document.createElement('img');
+    itemImage.src = `cardImages/${itemTypes[itemValue]}.png`;
 
     if (itemValue == 2) {
         if (emptySpecialSlots.length > 0) {
             emptySpecialSlots[0].dataset.item = itemTypes[itemValue];
-            emptySpecialSlots[0].innerText = itemTypes[itemValue];
+            emptySpecialSlots[0].appendChild(itemImage);
+            //emptySpecialSlots[0].innerText = itemTypes[itemValue];
         } else {
             console.log('빈 슬롯이 없습니다');
         }
     } else {
         if (emptySlots.length > 0) {
             emptySlots[0].dataset.item = itemTypes[itemValue];
-            emptySlots[0].innerText = itemTypes[itemValue];
+            emptySlots[0].appendChild(itemImage);
+            //emptySlots[0].innerText = itemTypes[itemValue];
         } else {
             console.log('빈 슬롯이 없습니다');
         }

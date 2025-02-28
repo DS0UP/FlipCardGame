@@ -14,6 +14,13 @@ body {
     margin: 0;
 }
 
+body {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-use-select: none;
+    user-select: none;
+}
+
 .container {
     width: 90%;
     margin: auto;
@@ -92,17 +99,28 @@ body {
 }
   
 .item {
+    display: flex;
     background-color: #f0f0f0;
     color: #323d58;
     border-radius: 10px;
     aspect-ratio: 4 / 3; /* 3:4 비율을 유지 */
+    cursor: pointer; 
+    justify-content: center;
 }
 
 .specialItem {
+    display: flex;
     background-color: #f0f0f0;
     color: #323d58;
     border-radius: 10px;
     aspect-ratio: 4 / 4.5; /* 3:4 비율을 유지 */
+    cursor: pointer; 
+    justify-content: center;
+}
+
+.items img {
+    width: 70%;
+    object-fit: cover;
 }
 
 @media (max-width: 600px) {
@@ -160,16 +178,22 @@ body {
     }
       
     .item {
+        display: flex;
         background-color: #f0f0f0;
         color: #323d58;
         border-radius: 10px;
         aspect-ratio: 4 / 3; /* 3:4 비율을 유지 */
+        cursor: pointer; 
+        justify-content: center;
     }
 
     .specialItem {
+        display: flex;
         background-color: #f0f0f0;
         color: #323d58;
         border-radius: 10px;
         aspect-ratio: 4 / 4.5; /* 3:4 비율을 유지 */
+        cursor: pointer; 
+        justify-content: center;
     }
 }
