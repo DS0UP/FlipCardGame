@@ -453,19 +453,11 @@ function addItem(itemValue) {
 function addRoundItem() {
     switch (currentRound) {
         case 1:
-            addItem(0);
-            addItem(1);
-            break;
         case 2:
             addItem(0);
             addItem(1);
             break;
         case 3:
-            addItem(0);
-            addItem(1);
-            addItem(1);
-            addItem(2);
-            break;
         case 4:
             addItem(0);
             addItem(1);
@@ -538,10 +530,13 @@ function autoMatch() {
         const [firstCard, secondCard] = matchedPair; // 첫 번째, 두 번째 카드
 
         // 마우스 이벤트 시뮬레이션
+        const mouseDownEvent = new MouseEvent('mousedown', {});
         const mouseUpEvent = new MouseEvent('mouseup', {});
 
         // 첫 번째 카드와 두 번째 카드에 대해 mouseup 이벤트를 트리거
+        firstCard.dispatchEvent(mouseDownEvent);
         firstCard.dispatchEvent(mouseUpEvent);
+        secondCard.dispatchEvent(mouseDownEvent);
         secondCard.dispatchEvent(mouseUpEvent);
     } else {
         console.log("매칭 가능한 카드가 없습니다.");
