@@ -70,7 +70,7 @@ function gameClear() {
     console.log(`점수 저장 완료: ${myScore}`);
     saveRanking(MyNickName, myScore);
     setTimeout(() => {
-        window.location.href="../../MatchTheCard_GameClearScreen/ClearScreen.html"
+        window.location.href="../MatchTheCard_GameClearScreen/ClearScreen.html"
     }, 3000);
 }
 
@@ -82,7 +82,7 @@ function gameOver() {
     console.log(`점수 저장 완료: ${myScore}`);
     saveRanking(MyNickName, myScore);
     setTimeout(() => {
-        window.location.href="../../MatchTheCard_GameOverScreen/gameoverScreen.html"
+        window.location.href="../MatchTheCard_GameOverScreen/gameoverScreen.html"
     }, 3000);
 }
 
