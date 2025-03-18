@@ -46,7 +46,7 @@ let rank = 0; // 내 순위를 저장할 변수
 let MyNickName = ''; // 플레이어 닉네임을 저장할 변수
 
 const rankApiUrl = "http://125.188.5.149:13131/api/rank.php"; // 랭킹 조회 API URL
-const resultApiUrl = "http://125.188.5.149:13131/api/result.php"; // 결과 저장 API URL
+const resultApiUrl = "http://125.188.5.149:13131/api/score.php"; // 결과 저장 API URL
 
 /**
  * 게임을 시작하는 함수
@@ -57,7 +57,7 @@ function gameStart() {
         history.back()
         return;
     }
-    MyNickName = localStorage.getItem("id") || "guest"; // 닉네임 가져오기 (없으면 guest)
+    MyNickName = localStorage.getItem("playerNickname") || "guest"; // 닉네임 가져오기 (없으면 guest)
     createItemSlots(5);
     roundSet(currentRound);
     isGameStarted = true;
@@ -66,24 +66,29 @@ function gameStart() {
 // 게임 클리어 시 호출
 function gameClear() {
     isGameStarted = false;
-    localStorage.setItem("score", myScore);
-    console.log(`점수 저장 완료: ${myScore}`);
     saveRanking(MyNickName, myScore);
     setTimeout(() => {
         window.location.href="../MatchTheCard_GameClearScreen/ClearScreen.html"
     }, 3000);
+
+    localStorage.setItem("playerNickname", MyNickName);
+    localStorage.setItem("playerRank", rank);
+    localStorage.setItem("playerScore", myScore);
+    
 }
 
 // 게임 오버 시 호출
 function gameOver() {
     isGameStarted = false;
     showRound();
-    localStorage.setItem("score", myScore);
-    console.log(`점수 저장 완료: ${myScore}`);
     saveRanking(MyNickName, myScore);
     setTimeout(() => {
         window.location.href="../MatchTheCard_GameOverScreen/gameoverScreen.html"
     }, 3000);
+
+    localStorage.setItem("playerNickname", MyNickName);
+    localStorage.setItem("playerRank", rank);
+    localStorage.setItem("playerScore", myScore);
 }
 
 /**
@@ -657,30 +662,26 @@ async function saveRanking(nickname, score) {
     const params = new URLSearchParams();
     params.append("nickname", nickname);
     params.append("score", score);
-  
-    try {
-        const response = await fetch(resultApiUrl, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: params.toString(),
-        });
-    
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
 
-        // 응답을 JSON으로 처리
-        const result = await response.json();
-        
-        // 서버 응답 로그 출력
-        console.log(result.message);
-    
-        return result; // 응답 객체 반환
-    } catch (error) {
-        console.error("랭킹 저장 실패:", error);
-        throw error; // 에러를 호출자에게 다시 던져준다.
+    for (let i = 0; i < rankings.length; i++) {
+        if (rankings[i].nickname == nickname && rankings[i].score < score) {
+            try {
+                const response = await fetch(resultApiUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                    body: params.toString(),
+                });
+            
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+            } catch (error) {
+                console.error("랭킹 저장 실패:", error);
+                throw error; // 에러를 호출자에게 다시 던져준다.
+            }
+        }
     }
 }
 
