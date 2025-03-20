@@ -7,7 +7,7 @@
 
 body {
     font-family: 'KCC-Hanbit';
-    background: url(./asset/images/GameScreen_BackGround.png);
+    background: url(../asset/images/GameScreen_BackGround.png);
     background-size: cover;
     color: white;
     text-align: center;

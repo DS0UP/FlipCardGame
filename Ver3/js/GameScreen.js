@@ -45,8 +45,10 @@ let rankings = []; // 랭킹 데이터를 저장할 변수
 let rank = 0; // 내 순위를 저장할 변수
 let MyNickName = ''; // 플레이어 닉네임을 저장할 변수
 
+/*
 const rankApiUrl = "http://125.188.5.149:13131/api/rank.php"; // 랭킹 조회 API URL
 const resultApiUrl = "http://125.188.5.149:13131/api/score.php"; // 결과 저장 API URL
+*/
 
 /**
  * 게임을 시작하는 함수
@@ -68,7 +70,8 @@ function gameClear() {
     isGameStarted = false;
     saveRanking(MyNickName, myScore);
     setTimeout(() => {
-        window.location.href="../MatchTheCard_GameClearScreen/ClearScreen.html"
+        //window.location.href="../MatchTheCard_GameClearScreen/ClearScreen.html"
+        alert("게임 클리어! 축하합니다!");
     }, 3000);
 
     localStorage.setItem("playerNickname", MyNickName);
@@ -83,7 +86,8 @@ function gameOver() {
     showRound();
     saveRanking(MyNickName, myScore);
     setTimeout(() => {
-        window.location.href="../MatchTheCard_GameOverScreen/gameoverScreen.html"
+        //window.location.href="../MatchTheCard_GameOverScreen/gameoverScreen.html"
+        alert("게임 오버! 다시 도전해보세요!");
     }, 3000);
 
     localStorage.setItem("playerNickname", MyNickName);
@@ -226,7 +230,7 @@ function flipCard(selectedcard) {
                 // 맞은 카드에 효과 추가
                 firstCard.classList.add('matched');
                 secondCard.classList.add('matched');
-                const correctSound = new Audio('./asset/sounds/DeviceConnect.wav'); // 맞았을 때 효과음
+                const correctSound = new Audio('../asset/sounds/DeviceConnect.wav'); // 맞았을 때 효과음
                 correctSound.play(); // 맞았을 때 효과음 재생
             }, 500);
 
@@ -239,7 +243,7 @@ function flipCard(selectedcard) {
                 // 틀린 카드에 효과 추가
                 firstCard.classList.add('mismatch');
                 secondCard.classList.add('mismatch');
-                const wrongSound = new Audio('./asset/sounds/DeviceConnectionError.wav'); // 틀렸을 때 효과음
+                const wrongSound = new Audio('../asset/sounds/DeviceConnectionError.wav'); // 틀렸을 때 효과음
                 wrongSound.play(); // 틀렸을 때 효과음 재생
             }, 500);
 
@@ -269,7 +273,7 @@ function checkRoundClear() {
         if (timerId) cancelAnimationFrame(timerId); // 기존 타이머 정리
         showRound();
         nextRound();
-        const clearSound = new Audio('./asset/sounds/alarm-3.mp3'); // 맞았을 때 효과음
+        const clearSound = new Audio('../asset/sounds/alarm-3.mp3'); // 맞았을 때 효과음
         clearSound.volume = 0.1;  // 0.5는 50% 볼륨
         clearSound.play(); // 클리어 효과음 재생
     }
