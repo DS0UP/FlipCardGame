@@ -149,7 +149,7 @@ function createCard(value) {
     back.classList.add('back');
 
     const cardImage = document.createElement('img');
-    cardImage.src = `asset/cardImages/${value}.png`; // 이미지 경로를 설정
+    cardImage.src = `./Ver3/asset/cardImages/${value}.png`; // 이미지 경로를 설정
     back.appendChild(cardImage); // 이미지 추가
 
     // 앞면과 뒷면을 카드에 추가
@@ -230,7 +230,7 @@ function flipCard(selectedcard) {
                 // 맞은 카드에 효과 추가
                 firstCard.classList.add('matched');
                 secondCard.classList.add('matched');
-                const correctSound = new Audio('../asset/sounds/DeviceConnect.wav'); // 맞았을 때 효과음
+                const correctSound = new Audio('./Ver3/asset/sounds/DeviceConnect.wav'); // 맞았을 때 효과음
                 correctSound.play(); // 맞았을 때 효과음 재생
             }, 500);
 
@@ -243,7 +243,7 @@ function flipCard(selectedcard) {
                 // 틀린 카드에 효과 추가
                 firstCard.classList.add('mismatch');
                 secondCard.classList.add('mismatch');
-                const wrongSound = new Audio('../asset/sounds/DeviceConnectionError.wav'); // 틀렸을 때 효과음
+                const wrongSound = new Audio('./Ver3/asset/sounds/DeviceConnectionError.wav'); // 틀렸을 때 효과음
                 wrongSound.play(); // 틀렸을 때 효과음 재생
             }, 500);
 
@@ -273,7 +273,7 @@ function checkRoundClear() {
         if (timerId) cancelAnimationFrame(timerId); // 기존 타이머 정리
         showRound();
         nextRound();
-        const clearSound = new Audio('../asset/sounds/alarm-3.mp3'); // 맞았을 때 효과음
+        const clearSound = new Audio('./Ver3/asset/sounds/alarm-3.mp3'); // 맞았을 때 효과음
         clearSound.volume = 0.1;  // 0.5는 50% 볼륨
         clearSound.play(); // 클리어 효과음 재생
     }
@@ -454,7 +454,7 @@ function shiftItemsUp() {
             // 빈 슬롯을 찾은 후, 그 이후 아이템을 위로 이동
             slots[firstEmptySlotIndex].dataset.item = slot.dataset.item;
             const itemImage = document.createElement('img');
-            itemImage.src = `./asset/cardImages/${slot.dataset.item}.png`;
+            itemImage.src = `./Ver3/asset/cardImages/${slot.dataset.item}.png`;
             slots[firstEmptySlotIndex].appendChild(itemImage)
             slot.dataset.item = '';
             slot.innerText = '';
@@ -475,8 +475,8 @@ function addItem(itemvalue) {
     const emptySpecialSlots = Array.from(specialSlots).filter(specialSlots => !specialSlots.dataset.item);
     const itemImage = document.createElement('img');
     const modalItemImage = document.createElement('img');
-    itemImage.src = `./asset/cardImages/${itemTypes[itemvalue]}.png`;
-    modalItemImage.src = `./asset/cardImages/${itemTypes[itemvalue]}.png`;
+    itemImage.src = `./Ver3/asset/cardImages/${itemTypes[itemvalue]}.png`;
+    modalItemImage.src = `./Ver3/asset/cardImages/${itemTypes[itemvalue]}.png`;
 
     if (itemvalue == 2) {
         if (emptySpecialSlots.length > 0) {
